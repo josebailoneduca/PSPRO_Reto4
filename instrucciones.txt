@@ -1,0 +1,6 @@
+RETO 4
+A) Estudio teórico deTIC/TAC y TIC/TAC/TOC de cara conseguir Mutex en las secciones criticas.
+
+B) Implementar Deker, Peterson y Lampart en java
+
+C) Simular una base de datos. Crear hebras que hagan el update y select simultaneamente
