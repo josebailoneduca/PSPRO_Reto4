@@ -1,27 +1,32 @@
 package reto4b.lamport;
 
+import java.util.Random;
+
 public class HiloLamport extends Thread {
 
 	//ATRIBUTOS DE CLASE
-	private static boolean[] escoger=new boolean[2];
-	private static int[][] numero=new int[2][2];
-	private static int tamanoVuelta=0;
-	private static int vueltaMenor=1;
+	//estado de escogiendo
+	public static boolean[] escogiendo=new boolean[2];
+	//numeros adjudicados
+	public static int[] numero;
+
+	//numero maximo actual
+	public static int max = 0; 
 	
 	
 	//ATRIBUTOS DE OBJETO
 	private int id=0;
 	private int ciclos;
-	private int valor=1;
+	private int valorOperacionCritica=1;
+	private Random r=new Random();
 	// METODOS DE CLASE
 	/**
 	 * Configurar la cantidad de hilos soportados por Lamport	
-	 * @param n Cantidad de hios
+	 * @param n Cantidad de hilos
 	 */
 	public static void setNumeroHebras(int n) {
-		escoger=new boolean[n];
-		numero=new int[n][2];
-		tamanoVuelta=n;
+		escogiendo=new boolean[n];
+		numero=new int[n];
 	}
 	
 	
@@ -31,43 +36,49 @@ public class HiloLamport extends Thread {
 	 * Constructor
 	 * @param id indice del hilo para su gestion en Lamport
 	 */
-	public HiloLamport(int id, int ciclos,int valor){
+	public HiloLamport(int id, int ciclos,int valorOperacionCritica){
 		this.id=id;
 		this.ciclos=ciclos;
-		this.valor=valor;
-	}
+		this.valorOperacionCritica=valorOperacionCritica;
+		}
 	
 	
 	@Override
 	public void run() {
 		while (ciclos>0) {
-			int t = MainLamport.contadorCritico;
-			MainLamport.contadorCritico=t+this.valor;
+ 			
+			escogiendo[this.id]=true;
+			numero[this.id]=++max;
+			escogiendo[this.id]=false;
+			
+ 			for (int j=0;j<escogiendo.length;j++) {
+				while(escogiendo[j]&&j!=this.id);
+				while (numero[j]!=0 && (numero[j]<numero[this.id]||(numero[j]==numero[this.id]&&j<this.id))) {
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+			}
+			
+			//inicio seccion critica>>
+ 			int t = MainLamport.contadorCritico;
+			MainLamport.contadorCritico=t+this.valorOperacionCritica;
+			//<< fin seccion critica
+			numero[this.id]=0;
 			ciclos--;
+			//simular tiempos diferentes tras la seccion critica
+			try {
+				Thread.sleep(r.nextInt(5));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//imprimir progreso
+			System.out.println("hilo "+this.id+" ciclos restantes:"+ciclos);
 		}
-		
-		
 	}
-	
-	
-	
 }
-
-
-
-
-
-//while (true)
-//{
-//	escoger[i] = true;
-//	número[i] = max(número[0],..., número[N - 1]) + 1;
-//	escoger[i] = false;
-//	for (int j = 0; j < N; ++j)
-//	{
-//		while (escoger[j]);
-//		while (número[j] != 0 && (número[j],j) < (número[i], i));
-//	}
-//	sección_crítica();
-//	número[i] = 0;
-//	sección_no_crítica();
-//}
+ 

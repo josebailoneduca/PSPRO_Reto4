@@ -1,6 +1,6 @@
-package reto4b.lamport;
+package reto4b.lamport_limitevuelta;
 
-public class MainLamport {
+public class MainLamportLimiteVuelta {
 
 	
 	public static int contadorCritico=0;
@@ -12,26 +12,26 @@ public class MainLamport {
 
 		//parametros de creacion
 		int cantidadHebras=500;
-		int ciclosPorHebra=100;
+		int ciclosPorHebra=50;
 		
 		//configuracion dde los arrays para lamport
-		HiloLamport.setNumeroHebras(cantidadHebras);
+		HiloLamportLimiteVuelta.setNumeroHebras(cantidadHebras);
 		
 		//iniciar todos los hilos
-		HiloLamport[] hilos= new HiloLamport[cantidadHebras];		
+		HiloLamportLimiteVuelta[] hilos= new HiloLamportLimiteVuelta[cantidadHebras];		
 		for (int i = 0; i<cantidadHebras;i++) {
 			int valor=1;
 			//alternas hebras sumando y restando (el resultado final deberia se 0)
 			if (i%2==0)
 				valor=-1;
-			HiloLamport hebra= new HiloLamport(i,ciclosPorHebra,valor);
+			HiloLamportLimiteVuelta hebra= new HiloLamportLimiteVuelta(i,ciclosPorHebra,valor);
 			hilos[i]=hebra;
 			hebra.start();
 		}
 		
 		
 		//esperar a todos los hilos para imprimir el resultado final
-		for (HiloLamport hiloLamport : hilos) {
+		for (HiloLamportLimiteVuelta hiloLamport : hilos) {
 			try {
 				hiloLamport.join();
 			} catch (InterruptedException e) {
