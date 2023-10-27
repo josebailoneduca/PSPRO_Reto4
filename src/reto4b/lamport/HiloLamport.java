@@ -77,6 +77,7 @@ public class HiloLamport extends Thread {
 				e.printStackTrace();
 			}
 			//imprimir progreso
+			if (ciclos%10==0)
 			System.out.println("hilo "+this.id+" ciclos restantes:"+ciclos);
 		}
 	}

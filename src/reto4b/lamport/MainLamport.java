@@ -11,7 +11,7 @@ public class MainLamport {
 	public static void main(String[] args) {
 
 		//parametros de creacion
-		int cantidadHebras=500;
+		int cantidadHebras=400;
 		int ciclosPorHebra=100;
 		
 		//configuracion dde los arrays para lamport

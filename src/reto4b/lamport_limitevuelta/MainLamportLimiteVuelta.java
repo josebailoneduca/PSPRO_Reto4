@@ -39,6 +39,8 @@ public class MainLamportLimiteVuelta {
 			}
 		}
 		
+		System.out.println("******************************");
 		System.out.println("Valor final (0 es OK):"+contadorCritico);
+		System.out.println("******************************");
 	}	
 }
