@@ -70,7 +70,7 @@ public class HiloLamportLimiteVuelta extends Thread {
 	private void cogerNumero() {
 		//incrementar max y asignar numero
 		numero[this.i][0] = ++max;
-		// comprobar si se ha terminado la vuelta y en su caso se cambia la vuelta mayor
+		// comprobar si se ha terminado la vuelta y en su caso se cambia la vuelta de numeros
 		if (numero[this.i][0] > tamanoVuelta) {
 			max = 0;
 			numero[this.i][0] = 1;
@@ -82,7 +82,7 @@ public class HiloLamportLimiteVuelta extends Thread {
 
 	@Override
 	public void run() {
-		//ciclos que realizara el hilo antes de morir
+		//Bucle de ciclos que realizara el hilo antes de morir
 		while (ciclos > 0) {
 
 			//levantar bandera de escogiendo
@@ -99,27 +99,12 @@ public class HiloLamportLimiteVuelta extends Thread {
 
 				//ESPERAR SI HAY OTRO HILO CON NUMERO MENOR. EL NUMERO MENOR DEPENDE DEL NUMERO Y DEL TIPO DE VUELTA
 				// j:otra hebra, i:hebra actual				
-				// Esperar si se da ALGUNO de estos dos casos:
+				// Esperar si se da ALGUNO de estos casos:
 				//1-Numero de j no es 0, j e i tienen el mismo tipo de vuelta Y se da ALGUNO de estos casos:  
 				//    2.1:El numero de j es menor que el numero de i
-				//	  2.2: j es menor que i
+				//	  2.2:El numero de j es igual al numero de i Y j es menor que i
 				//2-Numero de j no es 0, tienen diferente tipo de vuelta Y el tipo de vuelta de j tiene mas prioridad que la vuelta de i
 				
-				//Leyenda e condicion de while
-				// Numero de j no es igual a 0
-				// Y(
-				//   (
-				//    Vuelta de j es igual a vuelta de i
-				//      Y(
-				// 		  Numero de j es menor que numero de i 
-				// 		  O
-				//		  (Numero de j es igual que numero de i  Y   j es menor que i)
-				//      )
-				//    )
-				//	 O
-				// 	 Vuelta de j es diferente que la de i y vuelta de i es una vuelta mayor(vuelta de menor prioridad)
-				// )
-				//
 				while (numero[j][0] != 0 //Numero de j no es 0
 						&&( 
 							(
@@ -142,12 +127,12 @@ public class HiloLamportLimiteVuelta extends Thread {
 
 			
 			
-			// inicio seccion critica>>>
-			//complejidad de seccion critica forzada para testear ruptura de coherencia de datos
+			// INICIO SECCION CRITICA>>>
+			//complejidad de seccion critica forzada para comprobar ruptura de coherencia de datos
 			int t = MainLamportLimiteVuelta.contadorCritico;
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
 			MainLamportLimiteVuelta.contadorCritico = t + this.valorOperacionCritica;
-			// <<<fin seccion critica
+			// <<<FIN SECCION CRITICA
 			
 			
 			
@@ -157,11 +142,11 @@ public class HiloLamportLimiteVuelta extends Thread {
 			
 		
 			// simular tiempos diferentes tras la seccion critica
-			try {Thread.sleep(r.nextInt(10));} catch (InterruptedException e) {e.printStackTrace();}
+			try {Thread.sleep(r.nextInt(1000));} catch (InterruptedException e) {e.printStackTrace();}
 			
-			// imprimir progreso cada 10 ciclos
-			if (ciclos % 10 == 0)
-				System.out.println("Hilo " + this.i + ": "+ciclos+ "ciclos restantes");
+			// imprimir progreso cada 3 ciclos
+			if (ciclos % 3 == 0)
+				System.out.println("Hilo " + this.i + "| ciclos restantes: "+ciclos);
 			
 			//reducir ciclos de vida del hilo
 			ciclos--;
