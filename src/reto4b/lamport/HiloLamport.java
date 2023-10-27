@@ -2,7 +2,6 @@ package reto4b.lamport;
 
 import java.util.Random;
 
-import reto4b.lamport_limitevuelta.MainLamportLimiteVuelta;
 
 public class HiloLamport extends Thread {
 
@@ -67,7 +66,7 @@ public class HiloLamport extends Thread {
 			
 			//inicio seccion critica>>
 			//complejidad de seccion critica forzada para testear ruptura de coherencia
-			int t = MainLamportLimiteVuelta.contadorCritico;
+			int t = MainLamport.contadorCritico;
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
 			MainLamport.contadorCritico=t+this.valorOperacionCritica;
 			//<< fin seccion critica
