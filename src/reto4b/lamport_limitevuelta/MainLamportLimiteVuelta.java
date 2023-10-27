@@ -11,7 +11,7 @@ public class MainLamportLimiteVuelta {
 	public static void main(String[] args) {
 
 		//parametros de creacion
-		int cantidadHebras=500;
+		int cantidadHebras=1000;
 		int ciclosPorHebra=50;
 		
 		//configuracion dde los arrays para lamport

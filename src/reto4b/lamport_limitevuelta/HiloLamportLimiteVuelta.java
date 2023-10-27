@@ -143,7 +143,9 @@ public class HiloLamportLimiteVuelta extends Thread {
 			
 			
 			// inicio seccion critica>>>
+			//complejidad de seccion critica forzada para testear ruptura de coherencia de datos
 			int t = MainLamportLimiteVuelta.contadorCritico;
+			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
 			MainLamportLimiteVuelta.contadorCritico = t + this.valorOperacionCritica;
 			// <<<fin seccion critica
 			
@@ -159,7 +161,7 @@ public class HiloLamportLimiteVuelta extends Thread {
 			
 			// imprimir progreso cada 10 ciclos
 			if (ciclos % 10 == 0)
-				System.out.println("hilo " + this.i + " ciclos restantes:" + ciclos);
+				System.out.println("Hilo " + this.i + ": "+ciclos+ "ciclos restantes");
 			
 			//reducir ciclos de vida del hilo
 			ciclos--;
