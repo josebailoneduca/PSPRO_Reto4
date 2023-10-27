@@ -16,22 +16,22 @@ public class MainDekker {
 		
 
 		//iniciar todos los hilos
-		HiloDekker[] hilos= new HiloDekker[cantidadHebras];		
+		HebraDekker[] hebras= new HebraDekker[cantidadHebras];		
 		for (int i = 0; i<cantidadHebras;i++) {
 			int valor=1;
 			//alternas hebras sumando y restando (el resultado final deberia se 0)
 			if (i%2==0)
 				valor=-1;
-			HiloDekker hebra= new HiloDekker(i,ciclosPorHebra,valor);
-			hilos[i]=hebra;
+			HebraDekker hebra= new HebraDekker(i,ciclosPorHebra,valor);
+			hebras[i]=hebra;
 			hebra.start();
 		}
 		
 		
 		//esperar a todos los hilos para imprimir el resultado final
-		for (HiloDekker hiloLamport : hilos) {
+		for (HebraDekker hebra : hebras) {
 			try {
-				hiloLamport.join();
+				hebra.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

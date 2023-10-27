@@ -1,8 +1,8 @@
-package reto4b.dekker;
+package reto4b.peterson;
 
 import java.util.Random;
 
-public class HiloDekker extends Thread {
+public class HebraPeterson extends Thread {
 
 	//ATRIBUTOS DE CLASE
 	//banderas
@@ -18,12 +18,8 @@ public class HiloDekker extends Thread {
  
 	
 	//METODOS DE OBJETO
-	
-	/**
-	 * Constructor
-	 * @param id indice del hilo para su gestion en Lamport
-	 */
-	public HiloDekker(int id, int ciclos,int valorOperacionCritica){
+ 
+	public HebraPeterson(int id, int ciclos,int valorOperacionCritica){
 		this.id=id;
 		this.ciclos=ciclos;
 		this.valorOperacionCritica=valorOperacionCritica;
@@ -35,28 +31,25 @@ public class HiloDekker extends Thread {
 		while (ciclos>0) {
 			
 			bandera[this.id]=true;
-			if (turno!=this.id) {
-				bandera[this.id]=false;
-				while(turno!=this.id) {
+			turno=(this.id==0)?1:0;
+			while(bandera[(this.id==0)?1:0] && turno!=this.id) {
 					Thread.yield();
 				}
-				bandera[this.id]=true;
-			}
+			
 			
  
 			//inicio seccion critica>>
 			//complejidad de seccion critica forzada para testear ruptura de coherencia
-			int t = MainDekker.contadorCritico;
+			int t = MainPeterson.contadorCritico;
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-			MainDekker.contadorCritico=t+this.valorOperacionCritica;
+			MainPeterson.contadorCritico=t+this.valorOperacionCritica;
 			//<< fin seccion critica
  
-			turno=(this.id==0)?1:0;
 			bandera[this.id]=false;
 			
 			
 			ciclos--;
-			//simular tiempos diferentes tras la seccion critica
+			//simular tiempos diferentes en seccion no critica
 			try {
 				Thread.sleep(r.nextInt(1));
 			} catch (InterruptedException e) {
@@ -65,7 +58,7 @@ public class HiloDekker extends Thread {
 			}
 			//imprimir progreso
 			if (ciclos%1==0)
-			System.out.println("hilo "+this.id+" ciclos restantes:"+ciclos);
+			System.out.println("Hebra Peterson "+this.id+" ciclos restantes:"+ciclos);
 		}
 	}
 }

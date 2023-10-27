@@ -2,13 +2,13 @@ package reto4b.lamport_limitevuelta;
 
 import java.util.Random;
 
-public class HiloLamportLimiteVuelta extends Thread {
+public class HebraLamportLimiteVuelta extends Thread {
 
 	// ATRIBUTOS DE CLASE#################################
 	
-	// Estado de hilos escogiendo
+	// Estado de hebras escogiendo
 	public static boolean[] escogiendo = new boolean[2];
-	// Numeros adjudicados a cada hilo (indice 0:numero, indice 1:tipo de vuelta)
+	// Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
 	public static int[][] numero;
 
 	// Numero maximo actual
@@ -23,10 +23,10 @@ public class HiloLamportLimiteVuelta extends Thread {
 	
 
 	// ATRIBUTOS DE OBJETO#############################
-	//Indice del hilo actual
+	//Indice de la hebra actual
 	private int i = 0;
 	
-	//Ciclos que debe dar el hilo actual
+	//Ciclos que debe dar la hebra actual
 	private int ciclos;
 	
 	//valor a sumar para la operacion critica
@@ -38,9 +38,9 @@ public class HiloLamportLimiteVuelta extends Thread {
 	
 	// METODOS DE CLASE  ####################################
 	/**
-	 * Configura la cantidad de hilos soportados por Lamport
+	 * Configura la cantidad de hebras soportadas por Lamport
 	 * 
-	 * @param n Cantidad de hilos
+	 * @param n Cantidad de hebras
 	 */
 	public static void setNumeroHebras(int n) {
 		escogiendo = new boolean[n];
@@ -52,17 +52,18 @@ public class HiloLamportLimiteVuelta extends Thread {
 
 	/**
 	 * Constructor
-	 * 
-	 * @param id indice del hilo para su gestion en Lamport
+	 * @param id Indice de la hebra en los arrays de lamport
+	 * @param ciclos Ciclos de fida de la hebra
+	 * @param valorOperacionCritica Valor a sumar a la variable compartida critica
 	 */
-	public HiloLamportLimiteVuelta(int id, int ciclos, int valorOperacionCritica) {
+	public HebraLamportLimiteVuelta(int id, int ciclos, int valorOperacionCritica) {
 		this.i = id;
 		this.ciclos = ciclos;
 		this.valorOperacionCritica = valorOperacionCritica;
 	}
 
 	/**
-	 * Asigna el numero de turno al hilo actual.
+	 * Asigna el numero de turno a la hebra actual.
 	 * En su indice 0 pone el numero y en el 1 el tipo de vuelta (0,1)
 	 * Este ultimo valor sera comparado con vueltaMayor para determinar prioridad ante un numero igual
 	 * 
@@ -82,7 +83,7 @@ public class HiloLamportLimiteVuelta extends Thread {
 
 	@Override
 	public void run() {
-		//Bucle de ciclos que realizara el hilo antes de morir
+		//Bucle de ciclos que realizara la hebra antes de morir
 		while (ciclos > 0) {
 
 			//levantar bandera de escogiendo
@@ -92,12 +93,12 @@ public class HiloLamportLimiteVuelta extends Thread {
 			//bajar bandera de escogiendo
 			escogiendo[this.i] = false;
 
-			//comprobar si el resto de hilos tiene un numero menor que el hilo actual
+			//comprobar si el resto de hebras tiene un numero menor que la hebra actual
 			for (int j = 0; j < escogiendo.length; j++) {
 				//ESPERAR SI J ESTA COGIENDO NUMERO
 				while (escogiendo[j] && j != this.i);
 
-				//ESPERAR SI HAY OTRO HILO CON NUMERO MENOR. EL NUMERO MENOR DEPENDE DEL NUMERO Y DEL TIPO DE VUELTA
+				//ESPERAR SI HAY OTRA HEBRA CON NUMERO MENOR. EL NUMERO MENOR DEPENDE DEL NUMERO Y DEL TIPO DE VUELTA
 				// j:otra hebra, i:hebra actual				
 				// Esperar si se da ALGUNO de estos casos:
 				//1-Numero de j no es 0, j e i tienen el mismo tipo de vuelta Y se da ALGUNO de estos casos:  
@@ -123,7 +124,7 @@ public class HiloLamportLimiteVuelta extends Thread {
 					try {Thread.sleep(1);} catch (InterruptedException e) {	e.printStackTrace();}
 				}
 				
-			}//fin for comprobar hilos
+			}//fin for comprobar HEBRAS
 
 			
 			
@@ -141,14 +142,14 @@ public class HiloLamportLimiteVuelta extends Thread {
 			numero[this.i][0] = 0;
 			
 		
-			// simular tiempos diferentes tras la seccion critica
+			// simular tiempos diferentes en seccion no critica
 			try {Thread.sleep(r.nextInt(1000));} catch (InterruptedException e) {e.printStackTrace();}
 			
 			// imprimir progreso cada 3 ciclos
 			if (ciclos % 3 == 0)
-				System.out.println("Hilo " + this.i + "| ciclos restantes: "+ciclos);
+				System.out.println("Hebra Lamport" + this.i + "| ciclos restantes: "+ciclos);
 			
-			//reducir ciclos de vida del hilo
+			//reducir ciclos de vida de la hebra
 			ciclos--;
 		}
 	}

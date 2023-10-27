@@ -3,7 +3,7 @@ package reto4b.lamport;
 import java.util.Random;
 
 
-public class HiloLamport extends Thread {
+public class HebraLamport extends Thread {
 
 	//ATRIBUTOS DE CLASE
 	//estado de escogiendo
@@ -22,8 +22,8 @@ public class HiloLamport extends Thread {
 	private Random r=new Random();
 	// METODOS DE CLASE
 	/**
-	 * Configurar la cantidad de hilos soportados por Lamport	
-	 * @param n Cantidad de hilos
+	 * Configurar la cantidad de hebras soportados por Lamport	
+	 * @param n Cantidad de hebras
 	 */
 	public static void setNumeroHebras(int n) {
 		escogiendo=new boolean[n];
@@ -35,9 +35,9 @@ public class HiloLamport extends Thread {
 	
 	/**
 	 * Constructor
-	 * @param id indice del hilo para su gestion en Lamport
+	 * @param id indice del hebra para su gestion en Lamport
 	 */
-	public HiloLamport(int id, int ciclos,int valorOperacionCritica){
+	public HebraLamport(int id, int ciclos,int valorOperacionCritica){
 		this.id=id;
 		this.ciclos=ciclos;
 		this.valorOperacionCritica=valorOperacionCritica;
@@ -72,7 +72,7 @@ public class HiloLamport extends Thread {
 			//<< fin seccion critica
 			numero[this.id]=0;
 			ciclos--;
-			//simular tiempos diferentes tras la seccion critica
+			//simular tiempos diferentes en seccion no critica
 			try {
 				Thread.sleep(r.nextInt(5));
 			} catch (InterruptedException e) {
@@ -81,7 +81,7 @@ public class HiloLamport extends Thread {
 			}
 			//imprimir progreso
 			if (ciclos%10==0)
-			System.out.println("hilo "+this.id+" ciclos restantes:"+ciclos);
+			System.out.println("Hebra Lamport "+this.id+" ciclos restantes:"+ciclos);
 		}
 	}
 }
