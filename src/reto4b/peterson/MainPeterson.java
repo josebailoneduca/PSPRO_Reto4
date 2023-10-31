@@ -1,5 +1,14 @@
 package reto4b.peterson;
 
+
+/**
+ * Prueba del algoritmo de Peterson
+ * Se generan 2 hebras cada una sumando +1 y -1 a una variable compartida en cada ciclo.
+ * La exclusion mutua a la hora de acceder a la variable compartida se hace usando el algoritmo de Peterson
+ * el cual esta implementado en las hebras.
+ * Cada hebra da el mismo numero finito de ciclos con lo que el resultado
+ * debe ser 0 si el algoritmo de Peterson ha funcionado 
+ */
 public class MainPeterson {
 
 	
@@ -11,21 +20,16 @@ public class MainPeterson {
 	public static void main(String[] args) {
 
 		//parametros de creacion
-		int cantidadHebras=2;
+
 		int ciclosPorHebra=10000;
 		
 
 		//iniciar todas las hebras
-		HebraPeterson[] hebras= new HebraPeterson[cantidadHebras];		
-		for (int i = 0; i<cantidadHebras;i++) {
-			int valor=1;
-			//alternas hebras sumando y restando (el resultado final deberia se 0)
-			if (i%2==0)
-				valor=-1;
-			HebraPeterson hebra= new HebraPeterson(i,ciclosPorHebra,valor);
-			hebras[i]=hebra;
-			hebra.start();
-		}
+		HebraPeterson[] hebras= new HebraPeterson[2];		
+		hebras[0]=new HebraPeterson(0,ciclosPorHebra,1);
+		hebras[0].start();
+		hebras[1]=new HebraPeterson(1,ciclosPorHebra,-1);
+		hebras[1].start();
 		
 		
 		//esperar a todas las hebras para imprimir el resultado final

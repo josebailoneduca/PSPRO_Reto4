@@ -1,8 +1,16 @@
 package reto4b.dekker;
 
+/**
+ * Prueba del algoritmo de Dekker
+ * Se generan 2 hebras cada una sumando +1 y -1 a una variable compartida en cada ciclo.
+ * La exclusion mutua a la hora de acceder a la variable compartida se hace usando el algoritmo de Dekker
+ * el cual esta implementado en las hebras.
+ * Cada hebra da el mismo numero finito de ciclos con lo que el resultado
+ * debe ser 0 si el algoritmo de Dekker ha funcionado 
+ */
 public class MainDekker {
 
-	
+	//variable compartida que cada hebra aumenta y disiminuye
 	public static int contadorCritico=0;
 	
 	
@@ -11,21 +19,15 @@ public class MainDekker {
 	public static void main(String[] args) {
 
 		//parametros de creacion
-		int cantidadHebras=2;
 		int ciclosPorHebra=10000;
 		
 
-		//iniciar todos los hilos
-		HebraDekker[] hebras= new HebraDekker[cantidadHebras];		
-		for (int i = 0; i<cantidadHebras;i++) {
-			int valor=1;
-			//alternas hebras sumando y restando (el resultado final deberia se 0)
-			if (i%2==0)
-				valor=-1;
-			HebraDekker hebra= new HebraDekker(i,ciclosPorHebra,valor);
-			hebras[i]=hebra;
-			hebra.start();
-		}
+		//iniciar los hilos
+		HebraDekker[] hebras= new HebraDekker[2];
+		hebras[0] =new HebraDekker(0,ciclosPorHebra,1);
+		hebras[0].start();
+		hebras[1] =new HebraDekker(1,ciclosPorHebra,-1);
+		hebras[1].start();
 		
 		
 		//esperar a todos los hilos para imprimir el resultado final

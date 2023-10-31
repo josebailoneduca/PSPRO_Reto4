@@ -18,7 +18,12 @@ public class HebraPeterson extends Thread {
  
 	
 	//METODOS DE OBJETO
- 
+ /**
+  * 
+  * @param id Identificador del hilo
+  * @param ciclos Ciclos a realizar por el hilo
+  * @param valorOperacionCritica Valor a sumar a la variable compartida
+  */
 	public HebraPeterson(int id, int ciclos,int valorOperacionCritica){
 		this.id=id;
 		this.ciclos=ciclos;
@@ -29,9 +34,11 @@ public class HebraPeterson extends Thread {
 	@Override
 	public void run() {
 		while (ciclos>0) {
-			
+			//levantar bandera propia
 			bandera[this.id]=true;
+			//ceder el turno a la otra hebra
 			turno=(this.id==0)?1:0;
+			//esperar mientras la otra hegra tenga bandera levantada y no sea el turno propio
 			while(bandera[(this.id==0)?1:0] && turno!=this.id) {
 					Thread.yield();
 				}
@@ -39,26 +46,25 @@ public class HebraPeterson extends Thread {
 			
  
 			//inicio seccion critica>>
-			//complejidad de seccion critica forzada para testear ruptura de coherencia
 			int t = MainPeterson.contadorCritico;
+			
+			//complejidad de seccion critica forzada para testear ruptura de coherencia
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
+			
+			//incrementar variable compartida
 			MainPeterson.contadorCritico=t+this.valorOperacionCritica;
 			//<< fin seccion critica
  
+			//bajar bandera propia
 			bandera[this.id]=false;
 			
 			
 			ciclos--;
 			//simular tiempos diferentes en seccion no critica
-			try {
-				Thread.sleep(r.nextInt(1));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//imprimir progreso
-			if (ciclos%1==0)
-			System.out.println("Hebra Peterson "+this.id+" ciclos restantes:"+ciclos);
+			try {Thread.sleep(r.nextInt(5));} catch (InterruptedException e) {}
+			//imprimir progreso cada 5 ciclos
+			if (ciclos%5==0)
+			System.out.println("Hebra Peterson nº "+this.id+" Ciclos restantes:"+ciclos);
 		}
 	}
 }

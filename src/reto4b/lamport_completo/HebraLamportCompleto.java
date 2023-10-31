@@ -1,8 +1,8 @@
-package reto4b.lamport_limitevuelta;
+package reto4b.lamport_completo;
 
 import java.util.Random;
 
-public class HebraLamportLimiteVuelta extends Thread {
+public class HebraLamportCompleto extends Thread {
 
 	// ATRIBUTOS DE CLASE#################################
 	
@@ -56,7 +56,7 @@ public class HebraLamportLimiteVuelta extends Thread {
 	 * @param ciclos Ciclos de fida de la hebra
 	 * @param valorOperacionCritica Valor a sumar a la variable compartida critica
 	 */
-	public HebraLamportLimiteVuelta(int id, int ciclos, int valorOperacionCritica) {
+	public HebraLamportCompleto(int id, int ciclos, int valorOperacionCritica) {
 		this.i = id;
 		this.ciclos = ciclos;
 		this.valorOperacionCritica = valorOperacionCritica;
@@ -129,10 +129,12 @@ public class HebraLamportLimiteVuelta extends Thread {
 			
 			
 			// INICIO SECCION CRITICA>>>
-			//complejidad de seccion critica forzada para comprobar ruptura de coherencia de datos
-			int t = MainLamportLimiteVuelta.contadorCritico;
+			int t = MainLamportCompleto.contadorCritico;
+
+			//complejidad de seccion critica forzada para testear ruptura de coherencia
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-			MainLamportLimiteVuelta.contadorCritico = t + this.valorOperacionCritica;
+
+			MainLamportCompleto.contadorCritico = t + this.valorOperacionCritica;
 			// <<<FIN SECCION CRITICA
 			
 			
