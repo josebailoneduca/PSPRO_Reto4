@@ -21,7 +21,7 @@ public class MainLamportCompleto {
 	public static void main(String[] args) {
 
 		//parametros de creacion
-		int cantidadHebras=500;
+		int cantidadHebras=300;
 		int ciclosPorHebra=50;
 		
 		//configuracion de los arrays para lamport
@@ -30,10 +30,8 @@ public class MainLamportCompleto {
 		//iniciar todas las hebras
 		HebraLamportCompleto[] hebras= new HebraLamportCompleto[cantidadHebras];		
 		for (int i = 0; i<cantidadHebras;i++) {
-			int valor=1;
-			//alternas hebras sumando y restando (el resultado final deberia se 0)
-			if (i%2==0)
-				valor=-1;
+			//alternas hebras sumando y restando 
+			int valor=(i%2==0)?-1:1;
 			HebraLamportCompleto hebra= new HebraLamportCompleto(i,ciclosPorHebra,valor);
 			hebras[i]=hebra;
 			hebra.start();

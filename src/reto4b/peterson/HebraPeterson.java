@@ -14,10 +14,9 @@ public class HebraPeterson extends Thread {
 	private int id=0;
 	private int ciclos;
 	private int valorOperacionCritica=1;
-	private Random r=new Random();
  
 	
-	//METODOS DE OBJETO
+
  /**
   * 
   * @param id Identificador del hilo
@@ -61,7 +60,7 @@ public class HebraPeterson extends Thread {
 			
 			ciclos--;
 			//simular tiempos diferentes en seccion no critica
-			try {Thread.sleep(r.nextInt(5));} catch (InterruptedException e) {}
+			try {Thread.sleep(new Random().nextInt(5));} catch (InterruptedException e) {}
 			//imprimir progreso cada 5 ciclos
 			if (ciclos%5==0)
 			System.out.println("Hebra Peterson nº "+this.id+" Ciclos restantes:"+ciclos);

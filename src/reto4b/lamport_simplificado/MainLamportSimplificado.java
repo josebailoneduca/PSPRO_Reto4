@@ -34,10 +34,8 @@ public class MainLamportSimplificado {
 		HebraLamportSimplificado[] hebras= new HebraLamportSimplificado[cantidadHebras];		
 		for (int i = 0; i<cantidadHebras;i++) {
 			try {Thread.sleep(5);} catch (InterruptedException e) {}
-			int valor=1;
-			//alternar hebras sumando y restando (el resultado final deberia ser 0)
-			if (i%2==0)
-				valor=-1;
+			//alternar hebras sumando y restando 
+			int valor=(i%2==0)?-1:1;
 			HebraLamportSimplificado hebra= new HebraLamportSimplificado(i,ciclosPorHebra,valor);
 			hebras[i]=hebra;
 			hebra.start();

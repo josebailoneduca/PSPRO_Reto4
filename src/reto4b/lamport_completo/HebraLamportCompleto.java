@@ -32,8 +32,7 @@ public class HebraLamportCompleto extends Thread {
 	//valor a sumar para la operacion critica
 	private int valorOperacionCritica = 1;
 	
-	//random para esperas simuladas
-	private Random r = new Random();
+ 
 
 	
 	// METODOS DE CLASE  ####################################
@@ -96,7 +95,9 @@ public class HebraLamportCompleto extends Thread {
 			//comprobar si el resto de hebras tiene un numero menor que la hebra actual
 			for (int j = 0; j < escogiendo.length; j++) {
 				//ESPERAR SI J ESTA COGIENDO NUMERO
-				while (escogiendo[j] && j != this.i);
+				while (escogiendo[j]) {
+					Thread.yield();
+				};
 
 				//ESPERAR SI HAY OTRA HEBRA CON NUMERO MENOR. EL NUMERO MENOR DEPENDE DEL NUMERO Y DEL TIPO DE VUELTA
 				// j:otra hebra, i:hebra actual				
@@ -133,7 +134,8 @@ public class HebraLamportCompleto extends Thread {
 
 			//complejidad de seccion critica forzada para testear ruptura de coherencia
 			try {Thread.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-
+			
+			//incrementar la variable compartida
 			MainLamportCompleto.contadorCritico = t + this.valorOperacionCritica;
 			// <<<FIN SECCION CRITICA
 			
@@ -145,11 +147,11 @@ public class HebraLamportCompleto extends Thread {
 			
 		
 			// simular tiempos diferentes en seccion no critica
-			try {Thread.sleep(r.nextInt(1000));} catch (InterruptedException e) {e.printStackTrace();}
+			try {Thread.sleep(new Random().nextInt(1000));} catch (InterruptedException e) {e.printStackTrace();}
 			
 			// imprimir progreso cada 3 ciclos
-			if (ciclos % 3 == 0)
-				System.out.println("Hebra Lamport" + this.i + "| ciclos restantes: "+ciclos);
+			if (ciclos % 5 == 0)
+				System.out.println("Hebra Lamport nº " + this.i + " Ciclos restantes: "+ciclos);
 			
 			//reducir ciclos de vida de la hebra
 			ciclos--;

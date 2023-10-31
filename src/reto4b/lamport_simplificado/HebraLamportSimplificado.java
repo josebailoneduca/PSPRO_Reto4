@@ -23,8 +23,8 @@ public class HebraLamportSimplificado extends Thread {
 	private int id=0;
 	private int ciclos;
 	private int valorOperacionCritica=1;
-	private Random r=new Random();
-	// METODOS DE CLASE
+ 
+	// METODOS DE CLASE  ####################################
 	/**
 	 * Configurar la cantidad de hebras soportados por Lamport	
 	 * @param n Cantidad de hebras
@@ -35,7 +35,7 @@ public class HebraLamportSimplificado extends Thread {
 	}
 	
 	
-	//METODOS DE OBJETO
+	//METODOS DE OBJETO  #########################################
 	
 	/**
 	 * Constructor
@@ -89,7 +89,7 @@ public class HebraLamportSimplificado extends Thread {
 			
 			//simular tiempos diferentes en seccion no critica
 			try {
-				Thread.sleep(r.nextInt(5));
+				Thread.sleep(new Random().nextInt(5));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
