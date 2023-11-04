@@ -11,7 +11,7 @@ public class HebraLamportSimplificado extends Thread {
 
 	//ATRIBUTOS DE CLASE
 	//estado de escogiendo
-	public static boolean[] escogiendo=new boolean[2];
+	public static boolean[] escogiendo;
 	//numeros adjudicados
 	public static int[] numero;
 
