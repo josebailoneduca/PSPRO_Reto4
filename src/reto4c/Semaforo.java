@@ -4,6 +4,8 @@ import java.util.Random;
 
 public class Semaforo {
 	private int n = 0;
+	
+	//hebras encoladas y bloqueadas esperando al semaforo
 	private boolean[] bloqueadas;
 
 	// lamport
@@ -41,7 +43,7 @@ public class Semaforo {
 			bloqueadas[i] = true;
 
 		lamportLibera();
-		// espera ocupada
+		// espera ocupada si esta bloqueado
 		while (bloqueadas[i] == true) {
 			try {
 				Thread.currentThread().sleep(1);
@@ -58,7 +60,7 @@ public class Semaforo {
 			Thread.currentThread().sleep(1);
 		} catch (InterruptedException e) {
 		}
-		// sacar u
+		// sacar un bloqueado si hay alguno
 		if (hayBloqueados()) {
 			boolean desbloqueado = false;
 			while (!desbloqueado) {

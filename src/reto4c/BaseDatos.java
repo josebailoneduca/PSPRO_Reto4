@@ -19,7 +19,7 @@ public class BaseDatos {
 	public void update() {
 		escritores.esperar();
 		tupla++;
-		try {Thread.currentThread().sleep(1);} catch (InterruptedException e) {}
+		//try {Thread.currentThread().sleep(1);} catch (InterruptedException e) {}
 		escritores.senalar();
 	}
 	
@@ -28,7 +28,7 @@ public class BaseDatos {
 		int leido=0;
 		lectores.esperar();
 		numeroLectores++;
-		try {Thread.currentThread().sleep(1);} catch (InterruptedException e) {}
+		//try {Thread.currentThread().sleep(1);} catch (InterruptedException e) {}
 		if (numeroLectores==1)
 			escritores.esperar();
 		lectores.senalar();
