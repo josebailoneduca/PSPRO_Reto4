@@ -2,7 +2,7 @@ package reto4c;
 
 import java.util.ArrayList;
 
-public class MainPruebaSemaforo {
+public class MainBaseDatos {
 public static int suma =0;
 	public static void main(String[] args) {
 		int totalHebras=100;

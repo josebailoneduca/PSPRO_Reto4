@@ -24,22 +24,20 @@ public class MainPeterson {
 		int ciclosPorHebra=10000;
 		
 
-		//iniciar todas las hebras
-		HebraPeterson[] hebras= new HebraPeterson[2];		
-		hebras[0]=new HebraPeterson(0,ciclosPorHebra,1);
-		hebras[0].start();
-		hebras[1]=new HebraPeterson(1,ciclosPorHebra,-1);
-		hebras[1].start();
+		//iniciar las hebras
+		HebraPeterson hebra0 =new HebraPeterson(0,ciclosPorHebra,1);
+		hebra0.start();
+		HebraPeterson hebra1 =new HebraPeterson(1,ciclosPorHebra,-1);
+		hebra1.start();
 		
 		
 		//esperar a todas las hebras para imprimir el resultado final
-		for (HebraPeterson hebra : hebras) {
 			try {
-				hebra.join();
+				hebra0.join();
+				hebra1.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
 		
 		System.out.println("Valor final Peterson(0 es OK):"+contadorCritico);
 	}	

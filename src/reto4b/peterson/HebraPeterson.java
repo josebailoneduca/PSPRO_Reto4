@@ -37,7 +37,7 @@ public class HebraPeterson extends Thread {
 			bandera[this.id]=true;
 			//ceder el turno a la otra hebra
 			turno=(this.id==0)?1:0;
-			//esperar mientras la otra hegra tenga bandera levantada y no sea el turno propio
+			//esperar mientras la otra hebra tenga bandera levantada y no sea el turno propio
 			while(bandera[(this.id==0)?1:0] && turno!=this.id) {
 					Thread.yield();
 				}
@@ -60,7 +60,8 @@ public class HebraPeterson extends Thread {
 			
 			ciclos--;
 			//simular tiempos diferentes en seccion no critica
-			try {Thread.sleep(new Random().nextInt(5));} catch (InterruptedException e) {}
+			try {Thread.sleep(new Random().nextInt(2));} catch (InterruptedException e) {}
+			
 			//imprimir progreso cada 5 ciclos
 			if (ciclos%5==0)
 			System.out.println("Hebra Peterson nº "+this.id+" Ciclos restantes:"+ciclos);

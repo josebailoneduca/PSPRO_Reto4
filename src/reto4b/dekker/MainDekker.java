@@ -23,22 +23,20 @@ public class MainDekker {
 		
 
 		//iniciar los hilos
-		HebraDekker[] hebras= new HebraDekker[2];
-		hebras[0] =new HebraDekker(0,ciclosPorHebra,1);
-		hebras[0].start();
-		hebras[1] =new HebraDekker(1,ciclosPorHebra,-1);
-		hebras[1].start();
+		HebraDekker hebra0 =new HebraDekker(0,ciclosPorHebra,1);
+		hebra0.start();
+		HebraDekker hebra1 =new HebraDekker(1,ciclosPorHebra,-1);
+		hebra1.start();
 		
 		
 		//esperar a todos los hilos para imprimir el resultado final
-		for (HebraDekker hebra : hebras) {
 			try {
-				hebra.join();
+				hebra0.join();
+				hebra1.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-		
-		System.out.println("Valor final Dekker(0 es OK):"+contadorCritico);
+			
+		System.out.println("Valor final Dekker(0 es OK): "+contadorCritico);
 	}	
 }
