@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class MainBaseDatos {
 public static int suma =0;
 	public static void main(String[] args) {
-		int totalHebras=100;
+		int totalHebras=20;
 		int ciclos=50;
 		BaseDatos bd = new BaseDatos(totalHebras);
 		ArrayList<HiloPeticionBD> hilos=new ArrayList<HiloPeticionBD> (); 
