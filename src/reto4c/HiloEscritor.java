@@ -24,7 +24,7 @@ public class HiloEscritor extends HiloPeticionBD {
 		
 		for (int c=0;c<ciclos;c++) {
  
-				bd.update();
+				bd.update(new Random().nextInt(100));
 				System.out.println("Hilo "+this.indice+" escribe");
 			 
 		}

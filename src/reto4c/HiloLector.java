@@ -23,7 +23,7 @@ public class HiloLector extends HiloPeticionBD {
 		
 		for (int c=0;c<ciclos;c++) {
 			
-				System.out.println("Hilo "+this.indice+" lee: "+bd.select());
+				System.out.println("Hilo "+this.indice+" lee: "+bd.select(new Random().nextInt(100)));
 			
 		}
 		

@@ -1,5 +1,6 @@
 package reto4c;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -60,16 +61,44 @@ public class BaseDatos {
 		System.out.println(f.getAbsolutePath());
 	}
 
-	public void update() {
+	public void update(int id) {
 		cola.esperar();
 		escritores.esperar();
 		cola.senalar();
-		tupla++;
+		//tupla++;
+		escribirADisco(id);
 		// try {Thread.currentThread().sleep(1);} catch (InterruptedException e) {}
 		escritores.senalar();
 	}
 
-	public int select() {
+	private void escribirADisco(int id) {
+		RandomAccessFile raf =null;
+		try {
+			 raf = new RandomAccessFile(f, "rw");
+			 raf.seek(id*4);
+			 int actual=raf.readInt();
+			 raf.seek(id*4);
+			 raf.writeInt(actual+1);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if (raf!=null)
+				raf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
+	public int select(int id) {
 		int leido = 0;
 		cola.esperar();
 		lectores.esperar();
@@ -80,7 +109,8 @@ public class BaseDatos {
 		cola.senalar();
 		lectores.senalar();
 
-		leido = tupla;
+		leido = leerDeDisco(id);
+		
 		lectores.esperar();
 		numeroLectores--;
 		try {
@@ -93,8 +123,59 @@ public class BaseDatos {
 		return leido;
 	}
 
+	private int leerDeDisco(int id) {
+		int salida=0;
+		RandomAccessFile raf =null;
+		try {
+			 raf = new RandomAccessFile(f, "r");
+			 raf.seek(id*4);
+			 salida=raf.readInt();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if (raf!=null)
+				raf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return salida;
+	}
+
 	public int getTupla() {
-		return tupla;
+		int salida=0;
+		RandomAccessFile raf =null;
+		try {
+			 raf = new RandomAccessFile(f, "r");
+			 raf.seek(0);
+			 while(true)
+			 salida+=raf.readInt();
+		
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch(EOFException e) {	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if (raf!=null)
+				raf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return salida;
 	}
 
 }

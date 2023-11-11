@@ -27,11 +27,11 @@ public class HiloPeticionBD extends Thread {
 		
 		for (int c=0;c<ciclos;c++) {
 			if (c%2==escribir) {
-				bd.update();
+				bd.update(0);
 				System.out.println("Hilo "+this.indice+" escribe");
 			}
 			else
-				System.out.println("Hilo "+this.indice+" lee: "+bd.select());
+				System.out.println("Hilo "+this.indice+" lee: "+bd.select(0));
 			try {
 				this.sleep(new Random().nextInt(1000));
 			} catch (InterruptedException e) {
