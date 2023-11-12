@@ -2,40 +2,31 @@ package reto4c;
 
 import java.util.Random;
 
-public class HiloLector extends HiloPeticionBD {
+public class HiloLector extends HiloConsultaBD {
 
- 
-	
 	public HiloLector(int indice, BaseDatos bd, int ciclos) {
 		super(indice, bd, ciclos);
-		this.ciclos=ciclos;
-	}
-
-	public int getIndice() {
-		return indice;
 	}
 
 	@Override
 	public void run() {
- 
-		//decidir si empieza leyendo o escribiendo
-		int escribir=new Random().nextInt(2);
-		
-		for (int c=0;c<ciclos;c++) {
+		for (int c = 0; c < ciclos; c++) {
+			int idTupla = new Random().nextInt(bd.getNumeroTuplas());
+			int valorLeido=bd.select(idTupla);
+			if (MainBaseDatos.debugSelect) 
+				System.out.println("Hilo " + this.indice + " lee tupla " + idTupla + " y obtiene valor: " + valorLeido);
 			
-				System.out.println("Hilo "+this.indice+" lee: "+bd.select(new Random().nextInt(100)));
+			if (MainBaseDatos.debugProgresoSelect)
+				System.out.println("Progreso del hilo lector id "+this.indice+": "  + (c * 100 / (ciclos-1)) + "%");
 			
-		}
-		
-		try {
-			Thread.sleep(new Random().nextInt(10));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (MainBaseDatos.esperaAleatoriaEnCiclosDeHebras > 0)
+				try {
+					Thread.sleep(new Random().nextInt(MainBaseDatos.esperaAleatoriaEnCiclosDeHebras));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 	}
 
-	 
-	
-	
 }

@@ -2,28 +2,28 @@ package reto4c;
 
 import java.util.Random;
 
-public class Semaforo {
-	private int n = 0;
+public class Semaforo{
+	protected int n = 0;
 	
 	//hebras encoladas y bloqueadas esperando al semaforo
-	private boolean[] bloqueadas;
+	protected boolean[] bloqueadas;
 
 	// lamport
 	// Estado de hebras escogiendo
-	private boolean[] escogiendo = new boolean[2];
+	protected boolean[] escogiendo = new boolean[2];
 	// Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
-	private int[][] numero;
+	protected int[][] numero;
 
 	// Numero maximo actual
-	private int max = 0;
+	protected int max = 0;
 
 	// Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una
 	// nueva vuelta
-	private int tamanoVuelta = 0;
+	protected int tamanoVuelta = 0;
 
 	// Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor)
 	// Va alternando entre 0 y 1
-	private int vueltaMayor = 0;
+	protected int vueltaMayor = 0;
 
 	public Semaforo(int n, int nHebras) {
 		this.n = n;
@@ -35,12 +35,12 @@ public class Semaforo {
 	}
 
 	public void esperar() {
-		int i = ((HiloPeticionBD) Thread.currentThread()).getIndice();
+		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		lamportEspera();
 		n--;
 		if (n < 0)
 			// bloquear esta
-			bloqueadas[i] = true;
+			bloquear(i);
 
 		lamportLibera();
 		// espera ocupada si esta bloqueado
@@ -52,8 +52,13 @@ public class Semaforo {
 		}
 	}
 
+	protected void bloquear(int i) {
+		bloqueadas[i] = true;
+		
+	}
+
 	public void senalar() {
-		Random r = new Random();
+		
 		lamportEspera();
 		n++;
 		try {
@@ -62,15 +67,7 @@ public class Semaforo {
 		}
 		// sacar un bloqueado si hay alguno
 		if (hayBloqueados()) {
-			boolean desbloqueado = false;
-			while (!desbloqueado) {
-				int i = r.nextInt(bloqueadas.length);
-				if (bloqueadas[i]) {
-					bloqueadas[i] = false;
-					desbloqueado = true;
-				}
-			}
-
+			desbloquear();
 		}
 		try {
 			Thread.currentThread().sleep(1);
@@ -79,9 +76,22 @@ public class Semaforo {
 		lamportLibera();
 	}
 
-	private void lamportEspera() {
+	protected void desbloquear() {
+		Random r = new Random();
+		boolean desbloqueado = false;
+		while (!desbloqueado) {
+			int i = r.nextInt(bloqueadas.length);
+			if (bloqueadas[i]) {
+				bloqueadas[i] = false;
+				desbloqueado = true;
+			}
+		}
+		
+	}
+
+	protected void lamportEspera() {
 		// recoger indice del hilo actual
-		int i = ((HiloPeticionBD) Thread.currentThread()).getIndice();
+		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		// levantar bandera de escogiendo
 		escogiendo[i] = true;
 		// coger numero
@@ -132,13 +142,13 @@ public class Semaforo {
 		// INICIO SECCION CRITICA>>>
 	}
 
-	private void lamportLibera() {
-		int i = ((HiloPeticionBD) Thread.currentThread()).getIndice();
+	protected void lamportLibera() {
+		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		// tirar numero
 		numero[i][0] = 0;
 	}
 
-	private void cogerNumero(int i) {
+	protected void cogerNumero(int i) {
 		// incrementar max y asignar numero
 		numero[i][0] = ++max;
 		// comprobar si se ha terminado la vuelta y en su caso se cambia la vuelta de
@@ -152,7 +162,7 @@ public class Semaforo {
 		numero[i][1] = vueltaMayor;
 	}
 
-	private boolean hayBloqueados() {
+	protected boolean hayBloqueados() {
 		for (int i = 0; i < bloqueadas.length; i++) {
 			if (bloqueadas[i])
 				return true;
