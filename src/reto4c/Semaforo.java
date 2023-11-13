@@ -12,40 +12,40 @@ import java.util.Random;
 public class Semaforo{
 	
 	/**
-	 * Numero de hebras que pueden pasar el semaforo sin espera
-	 */
-	protected int n = 0;
-	
-	/**
-	 * hebras encoladas y bloqueadas esperando al semaforo
+	 * hebras bloqueadas esperando al semaforo
 	 */
 	protected boolean[] bloqueadas;
 
+	/**
+	 * Numero de hebras que pueden pasar el semaforo sin espera
+	 */
+	private int n = 0;
+	
 	// ATRIBUTOS PARA MUTEX POR LAMPORT
 	/**
 	 * Estado de hebras escogiendo
 	 */
-	protected boolean[] escogiendo = new boolean[2];
+	private boolean[] escogiendo = new boolean[2];
 	
 	/**
 	 * Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
 	 */
-	protected int[][] numero;
+	private int[][] numero;
 
 	/**
 	 * Numero maximo actual
 	 */
-	protected int max = 0;
+	private int max = 0;
 
 	/**
 	 * Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una nueva vuelta
 	 */
-	protected int tamanoVuelta = 0;
+	private int tamanoVuelta = 0;
 
 	/**
 	 *  Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor) Va alternando entre 0 y 1
 	 */
-	protected int vueltaMayor = 0;
+	private int vueltaMayor = 0;
 
 	
 	/**
@@ -139,7 +139,7 @@ public class Semaforo{
 	 * Devuelve si hay hilos bloqueados en el semaforo
 	 * @return
 	 */
-	protected boolean hayBloqueados() {
+	private boolean hayBloqueados() {
 		for (int i = 0; i < bloqueadas.length; i++) {
 			if (bloqueadas[i])
 				return true;
@@ -151,7 +151,7 @@ public class Semaforo{
 	/**
 	 * Parte de espera del algoritmo de Lamport
 	 */
-	protected void lamportEspera() {
+	private void lamportEspera() {
 		// recoger indice del hilo actual
 		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		// levantar bandera de escogiendo
@@ -208,7 +208,7 @@ public class Semaforo{
 	/**
 	 * Parte de liberar del algoritmo de Lamport tras la seccion critica
 	 */
-	protected void lamportLibera() {
+	private void lamportLibera() {
 		//<< fin seccion critica
 		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		// tirar numero
@@ -219,7 +219,7 @@ public class Semaforo{
 	 * Recogida de numero para el algoritmo de Lamport
 	 * @param i Indice del hilo
 	 */
-	protected void cogerNumero(int i) {
+	private void cogerNumero(int i) {
 		// incrementar max y asignar numero
 		numero[i][0] = ++max;
 		// comprobar si se ha terminado la vuelta y en su caso se cambia la vuelta de
