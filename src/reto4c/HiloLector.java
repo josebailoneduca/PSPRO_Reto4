@@ -1,29 +1,46 @@
 package reto4c;
 
 import java.util.Random;
-
+/**
+ * Consulta de lectura de la base de datos
+ * 
+ * @author Jose Javier Bailon Ortiz
+ */
 public class HiloLector extends HiloConsultaBD {
-
+	
+	/**
+	 * Constructor 
+	 * @param indice Indice id del hilo
+	 * @param bd Base de datos a la que realizar las consultas
+	 * @param ciclos Cantidad de veces que debe ejecutar consulta
+	 */
 	public HiloLector(int indice, BaseDatos bd, int ciclos) {
 		super(indice, bd, ciclos);
 	}
 
+	/**
+	 * Implementacion de los ciclos de lectura
+	 */
 	@Override
 	public void run() {
 		for (int c = 0; c < ciclos; c++) {
+			//seleccion de una tupla aleatoria
 			int idTupla = new Random().nextInt(bd.getNumeroTuplas());
+			//lectura de la base de datos
 			int valorLeido=bd.select(idTupla);
+			
+			//mensajes para debug
 			if (MainBaseDatos.debugSelect) 
 				System.out.println("Hilo " + this.indice + " lee tupla " + idTupla + " y obtiene valor: " + valorLeido);
 			
 			if (MainBaseDatos.debugProgresoSelect)
 				System.out.println("Progreso del hilo lector id "+this.indice+": "  + (c * 100 / (ciclos-1)) + "%");
 			
+			// generacion de tiempo aletorio entre consultas
 			if (MainBaseDatos.esperaAleatoriaEnCiclosDeHebras > 0)
 				try {
 					Thread.sleep(new Random().nextInt(MainBaseDatos.esperaAleatoriaEnCiclosDeHebras));
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}

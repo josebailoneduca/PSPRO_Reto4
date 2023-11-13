@@ -2,47 +2,82 @@ package reto4c;
 
 import java.util.Random;
 
+
+/**
+ * Semaforo implementado usando el algoritmo de Lamport para el mutex de las secciones criticas
+ * Se trata de un semaforo debil que libera una hebra no determinada en su funcion senalar.
+ * 
+ * @author Jose Javier Bailon Ortiz
+ */
 public class Semaforo{
+	
+	/**
+	 * Numero de hebras que pueden pasar el semaforo sin espera
+	 */
 	protected int n = 0;
 	
-	//hebras encoladas y bloqueadas esperando al semaforo
+	/**
+	 * hebras encoladas y bloqueadas esperando al semaforo
+	 */
 	protected boolean[] bloqueadas;
 
-	// lamport
-	// Estado de hebras escogiendo
+	// ATRIBUTOS PARA MUTEX POR LAMPORT
+	/**
+	 * Estado de hebras escogiendo
+	 */
 	protected boolean[] escogiendo = new boolean[2];
-	// Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
+	
+	/**
+	 * Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
+	 */
 	protected int[][] numero;
 
-	// Numero maximo actual
+	/**
+	 * Numero maximo actual
+	 */
 	protected int max = 0;
 
-	// Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una
-	// nueva vuelta
+	/**
+	 * Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una nueva vuelta
+	 */
 	protected int tamanoVuelta = 0;
 
-	// Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor)
-	// Va alternando entre 0 y 1
+	/**
+	 *  Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor) Va alternando entre 0 y 1
+	 */
 	protected int vueltaMayor = 0;
 
+	
+	/**
+	 * Constructor
+	 * @param n Valor inicial del semaforo
+	 * @param nHebras Cantidad de hebras maxima con el que configurar los arrays necesarios para Lamport
+	 */
 	public Semaforo(int n, int nHebras) {
 		this.n = n;
 		bloqueadas = new boolean[nHebras];
-
 		escogiendo = new boolean[nHebras];
 		numero = new int[nHebras][2];
 		tamanoVuelta = nHebras;
 	}
 
+	
+	/**
+	 * Espera del semaforo
+	 */
 	public void esperar() {
+		//indice del hilo en ejecucion
 		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
+		//espera lamport
 		lamportEspera();
 		n--;
 		if (n < 0)
 			// bloquear esta
 			bloquear(i);
 
+		//libera lamport
 		lamportLibera();
+		
 		// espera ocupada si esta bloqueado
 		while (bloqueadas[i] == true) {
 			try {
@@ -52,13 +87,11 @@ public class Semaforo{
 		}
 	}
 
-	protected void bloquear(int i) {
-		bloqueadas[i] = true;
-		
-	}
-
+	/**
+	 * Senala el semaforo
+	 */
 	public void senalar() {
-		
+		//espera lamport
 		lamportEspera();
 		n++;
 		try {
@@ -76,6 +109,19 @@ public class Semaforo{
 		lamportLibera();
 	}
 
+	/**
+	 * Bloquea un hilo en el semaforo
+	 * @param i Indice del hilo
+	 */
+	protected void bloquear(int i) {
+		bloqueadas[i] = true;
+	}
+
+
+	/**
+	 * Desbloquea un hilo que este en espera en el semaforo
+	 * La eleccion del hilo desbloqueado es aleatoria haciendo el semaforo debil
+	 */
 	protected void desbloquear() {
 		Random r = new Random();
 		boolean desbloqueado = false;
@@ -89,6 +135,22 @@ public class Semaforo{
 		
 	}
 
+	/**
+	 * Devuelve si hay hilos bloqueados en el semaforo
+	 * @return
+	 */
+	protected boolean hayBloqueados() {
+		for (int i = 0; i < bloqueadas.length; i++) {
+			if (bloqueadas[i])
+				return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * Parte de espera del algoritmo de Lamport
+	 */
 	protected void lamportEspera() {
 		// recoger indice del hilo actual
 		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
@@ -142,12 +204,21 @@ public class Semaforo{
 		// INICIO SECCION CRITICA>>>
 	}
 
+	
+	/**
+	 * Parte de liberar del algoritmo de Lamport tras la seccion critica
+	 */
 	protected void lamportLibera() {
+		//<< fin seccion critica
 		int i = ((HiloConsultaBD) Thread.currentThread()).getIndice();
 		// tirar numero
 		numero[i][0] = 0;
 	}
 
+	/**
+	 * Recogida de numero para el algoritmo de Lamport
+	 * @param i Indice del hilo
+	 */
 	protected void cogerNumero(int i) {
 		// incrementar max y asignar numero
 		numero[i][0] = ++max;
@@ -160,13 +231,5 @@ public class Semaforo{
 		}
 		// asignar el tipo de vuelta
 		numero[i][1] = vueltaMayor;
-	}
-
-	protected boolean hayBloqueados() {
-		for (int i = 0; i < bloqueadas.length; i++) {
-			if (bloqueadas[i])
-				return true;
-		}
-		return false;
 	}
 }

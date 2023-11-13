@@ -3,21 +3,64 @@ package reto4c;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Simula una base de datos. Almacena un listado de numeros enteros en un
+ * archivo binario de manera secuencial. Se le puede pedir que devuelve el valor
+ * de una de las posiciones guardadas o que incremente en 1 el valor de alguna
+ * de las posiciones de archivo.
+ * 
+ * Controla el acceso con un algoritmo de lector escritor de W. Stallins con
+ * ciertas modificaciones que hacen que puede ser configurado para que sea con
+ * prioridad para los lectores o sin prioridad de lectura escritura.
+ * 
+ * Varios lectores puede acceder simultaneamente pero cuando un escritor tiene
+ * el acceso nadie puede acceder. Este comportamiento esta implementado con
+ * semaforos. En el caso de activarse el modo en el que no hay prioridad se
+ * puede elegir si el semaforo que controla el acceso sin prioridad sea un
+ * semaforo fuerte o debil.
+ * 
+ * @author Jose Javier Bailon Ortiz
+ */
 public class BaseDatos {
-	int numeroLectores = 0;
+	/**
+	 * lectores activos
+	 */
+	private int numeroLectores = 0;
 
+	/**
+	 * Semaforo lectores
+	 */
 	private Semaforo lectores;
+	/**
+	 * Semaforo escritores
+	 */
 	private Semaforo escritores;
+
+	/**
+	 * Semaforo que permite eliminar la prioridad de lectura/escritura
+	 */
 	private Semaforo cola;
-	private int numeroTuplas;
-	private File f;
+
+	/**
+	 * Define si el algoritmos de lectura escritura debe dar prioridad a los
+	 * lectores
+	 */
 	private boolean prioridadEnLectura;
+
+	/**
+	 * Cantidad de tuplas de la base de datos
+	 */
+	private int numeroTuplas;
+
+	/**
+	 * File que apunta al archivo de la base de datos
+	 */
+	private File f;
 
 	/**
 	 * Constructor
@@ -31,15 +74,148 @@ public class BaseDatos {
 	 *                                 ello. False si se quiere usar un semaforo
 	 *                                 debil
 	 */
-	public BaseDatos(String ruta, int numeroTuplas, int nHebras, boolean prioridadEnLectura,
-			boolean controlEstrictoInanicion) {
+	public BaseDatos(String ruta, int numeroTuplas, int nHebras, boolean prioridadEnLectura,boolean controlEstrictoInanicion) {
+		
+		//inicializar valores
 		this.prioridadEnLectura = prioridadEnLectura;
-		this.lectores = (controlEstrictoInanicion) ? new SemaforoEstricto(1, nHebras) : new Semaforo(1, nHebras);
-		this.escritores = (controlEstrictoInanicion) ? new SemaforoEstricto(1, nHebras) : new Semaforo(1, nHebras);
-		this.cola = (controlEstrictoInanicion) ? new SemaforoEstricto(1, nHebras) : new Semaforo(1, nHebras);
+		this.lectores = new Semaforo(1, nHebras);
+		this.escritores = new Semaforo(1, nHebras);
+		this.cola = (controlEstrictoInanicion) ? new SemaforoFuerte(1, nHebras) : new Semaforo(1, nHebras);
 		this.f = new File(ruta);
 		this.numeroTuplas = numeroTuplas;
+		
+		//crear base de datos
 		crearBaseDatos();
+	}
+
+	/**
+	 * Incrementa el valor de una tupla en +1
+	 * 
+	 * Controla el mutex de la seccion critica según la parte correspondiente a 
+	 * los escritores del algoritmo de W. Stallins con modificaciones
+	 * para evitar prioridad de lectores si asi se ha configurado
+	 * 
+	 * @param id Id de la tupla a editar
+	 */
+	public void update(int id) {
+		//semaforo de anulacion de prioridades
+		if (!prioridadEnLectura)
+			cola.esperar();
+		//escritores esperan
+		escritores.esperar();
+		//fin de semaforo de anulacion de prioridades
+		if (!prioridadEnLectura)
+			cola.senalar();
+		
+		//escritura a base de datos
+		//>>seccion critica
+		escribirADisco(id);
+		//<<fin seccion critica
+		
+		//liberacion de nuevo escritor
+		escritores.senalar();
+	}
+
+	/**
+	 * Devuelve el valor de una tupla
+	 * Controla el mutex de la seccion critica según la parte correspondiente a 
+	 * los lectores del algoritmo de W. Stallins con modificaciones
+	 * para evitar prioridad de lectores si asi se ha configurado
+	 * 
+	 * @param id Id de la tupla
+	 * @return El valor de la tupla
+	 */
+	public int select(int id) {
+	 
+		//semaforo de anulacion de prioridades
+ 		if (!prioridadEnLectura)
+			cola.esperar();
+ 		//lectores esperan
+		lectores.esperar();
+		//registrar lector activo
+		numeroLectores++;
+		//bloquear escritores si se es el primer lector
+		if (numeroLectores == 1)
+			escritores.esperar();
+		//fin de semaforo de anulacion de prioridades
+		if (!prioridadEnLectura)
+			cola.senalar();
+		
+		//liberacion de un lector
+		lectores.senalar();
+
+		//lectura de la base de datos
+		//>>seccion critica
+		int leido = leerDeDisco(id);
+		//<<fin seccion critica
+
+		//letores esperan
+		lectores.esperar();
+		//decrementar el nuemro de lectores activos
+		numeroLectores--;
+		try {
+			Thread.currentThread().sleep(1);
+		} catch (InterruptedException e) {
+		}
+		//si no quedan lectores se da paso a los escritores
+		if (numeroLectores == 0)
+			escritores.senalar();
+		//liberar lector
+		lectores.senalar();
+		
+		//devolver valor leido
+		return leido;
+	}
+
+	/**
+	 * Devuelve el numero de tuplas disponibles en la base de datos
+	 * 
+	 * @return El numero de tuplas
+	 */
+	public int getNumeroTuplas() {
+		return numeroTuplas;
+	}
+
+	/**
+	 * Devuelve una lista con todos los valores de las tuplas
+	 * 
+	 * @return La lista de valores
+	 */
+	public List<Integer> getTodasLasTuplas() {
+		ArrayList<Integer> listaValores = new ArrayList<Integer>();
+		RandomAccessFile raf = null;
+		try {
+			raf = new RandomAccessFile(f, "r");
+			//ir a inicio de archivo
+			raf.seek(0);
+			//recoger todos los valores hasta EOF
+			while (true)
+				listaValores.add(raf.readInt());
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (EOFException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (raf != null)
+					raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//devolver lista
+		return listaValores;
+	}
+
+	/**
+	 * Devuelve la ruta del archivo de la base de datos
+	 * @return La ruta absoluta del archivo
+	 */
+	public String getRuta() {
+		return this.f.getAbsolutePath();
 	}
 
 	/**
@@ -47,14 +223,19 @@ public class BaseDatos {
 	 * 0 cada una. Si el archivo ya existe es borrado
 	 */
 	private void crearBaseDatos() {
+		//borrado
 		if (f.exists())
 			f.delete();
+		
+		//creacion
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//rellenar archivo con ceros
 		RandomAccessFile raf = null;
 		try {
 			raf = new RandomAccessFile(f, "rw");
@@ -77,57 +258,19 @@ public class BaseDatos {
 	}
 
 	/**
-	 * Incrementa el valor de una tupla en +1
-	 * 
-	 * @param id Id de la tupla a editar
-	 */
-	public void update(int id) {
-		if (!prioridadEnLectura)
-			cola.esperar();
-		escritores.esperar();
-		if (!prioridadEnLectura)
-			cola.senalar();
-		escribirADisco(id);
-		escritores.senalar();
-	}
-
-	public int select(int id) {
-		int leido = 0;
-		if (!prioridadEnLectura)
-		cola.esperar();
-		lectores.esperar();
-		numeroLectores++;
-		if (numeroLectores == 1)
-			escritores.esperar();
-		if (!prioridadEnLectura)
-		cola.senalar();
-		lectores.senalar();
-
-		leido = leerDeDisco(id);
-
-		lectores.esperar();
-		numeroLectores--;
-		try {
-			Thread.currentThread().sleep(1);
-		} catch (InterruptedException e) {
-		}
-		if (numeroLectores == 0)
-			escritores.senalar();
-		lectores.senalar();
-		return leido;
-	}
-
-	/**
-	 * Lee el valor de una tupla y actualiza su valor a +1
-	 * 
+	 * Lee el valor de una tupla del disco y actualiza su valor a +1
+	 * El acceso a la posicion en el archivo es realizado con id*4 debido a que almacena enteros los cuales ocupan 4 bytes.
 	 * @param id Id de la tupla
 	 */
 	private void escribirADisco(int id) {
 		RandomAccessFile raf = null;
 		try {
+			//recoger valor actual
 			int actual = this.leerDeDisco(id);
 			raf = new RandomAccessFile(f, "rw");
+			//desfase hasta la posicion de la tupla
 			raf.seek(id * 4);
+			//escribir nuevo valor
 			raf.writeInt(actual + 1);
 
 		} catch (FileNotFoundException e) {
@@ -144,6 +287,13 @@ public class BaseDatos {
 		}
 	}
 
+	/**
+	 * Lee el valor de una tupla del disco
+	 * El acceso a la posicion en el archivo es realizado con id*4 debido a que almacena enteros los cuales ocupan 4 bytes.
+	 * 
+	 * @param id Id de la tupla
+	 * @return valor de la tupla
+	 */
 	private int leerDeDisco(int id) {
 		int salida = 0;
 		RandomAccessFile raf = null;
@@ -165,44 +315,6 @@ public class BaseDatos {
 			}
 		}
 		return salida;
-	}
-
-	/**
-	 * Devuelve el numero de tuplas disponibles en la base de datos
-	 * 
-	 * @return El numero de tuplas
-	 */
-	public int getNumeroTuplas() {
-		return numeroTuplas;
-	}
-
-	public List<Integer> getTodasLasTuplas() {
-		ArrayList<Integer> salida = new ArrayList<Integer>();
-		RandomAccessFile raf = null;
-		try {
-			raf = new RandomAccessFile(f, "r");
-			raf.seek(0);
-			while (true)
-				salida.add(raf.readInt());
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (EOFException e) {
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (raf != null)
-					raf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return salida;
-	}
-
-	public String getRuta() {
-		return this.f.getAbsolutePath();
 	}
 
 }
