@@ -13,14 +13,29 @@ public class MainBaseDatos {
 	
 	public static void main(String[] args) {
 		
+		
+		//PARAMETROS DE CONFIGURACION
+		
+		//ruta del archivo de la base de datos
 		String rutaArchivo = "basedatos.dat";
+		//establecer que hay prioridad en la lectura
 		boolean prioridadEnLectura=false;
+		//controla de manera estricta la no inanicion de un hilo
 		boolean controlEstrictoDeInanicion = true;
 		
+		//catindad de hebras que leeran
 		int hebrasLectura = 30;
+		
+		//cantidad de hebras que escribiran
 		int hebrasEscritura = 30;
+		
+		//cantidad de lecturas o escrituras por hebra 
 		int ciclos = 50;
+		
+		//cantidad de tuplas existentes en la base de datos
 		int numeroTuplas = 30;
+		
+		//iniciar las hebras en un orden aleatorio
 		boolean startAleatorioDeHebras = false;
 
 		
@@ -68,13 +83,16 @@ public class MainBaseDatos {
 
 		// Mostrar resultado de los datos almacenados en la base de datos
 		List<Integer> tuplas = bd.getTodasLasTuplas();
-		System.out.println("*****************************");
-		System.out.println("Contenido de la base de datos");
-		System.out.println("*****************************");
+		System.out.println("************************************");
+		System.out.println("Contenido de la base de datos. Ruta: "+bd.getRuta());
+		System.out.println("************************************");
 		System.out.println(tuplas);
-		System.out.println("Suma del total de tuplas (valor esperado " + hebrasEscritura * ciclos + " ): "
-				+ tuplas.stream().reduce(0, (a, b) -> a + b));
+		System.out.println("Suma total de tuplas esperada:\t" + (hebrasEscritura * ciclos));
+		System.out.println("Suma real de tuplas en archivo:\t"+ tuplas.stream().reduce(0, (a, b) -> a + b));
 		System.out.println("Total de tiempo: " + ((System.currentTimeMillis() - tiempoInicio) / 1000) + " segundos");
+		System.out.println("Hebras de lectura: "+hebrasLectura);
+		System.out.println("Hebras de escritura: "+hebrasEscritura);
+		System.out.println("Ciclos realizados: "+ciclos);
 	}
 
 }

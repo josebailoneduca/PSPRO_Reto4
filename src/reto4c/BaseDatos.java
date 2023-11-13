@@ -201,4 +201,8 @@ public class BaseDatos {
 		return salida;
 	}
 
+	public String getRuta() {
+		return this.f.getAbsolutePath();
+	}
+
 }
