@@ -17,7 +17,9 @@ package reto4b.lamport_simplificado;
  */
 public class MainLamportSimplificado {
 
-	//variable compartida
+	/**
+	 * variable compartida
+	 */
 	public static int contadorCritico=0;
 	
 	

@@ -137,7 +137,7 @@ public class Semaforo{
 
 	/**
 	 * Devuelve si hay hilos bloqueados en el semaforo
-	 * @return
+	 * @return True si hay hilos bloqueados False si no los hay
 	 */
 	private boolean hayBloqueados() {
 		for (int i = 0; i < bloqueadas.length; i++) {

@@ -67,20 +67,17 @@ public class BaseDatos {
 	 * 
 	 * @param ruta                     Ruta del archivo en disco
 	 * @param numeroTuplas             Numero de tuplas de la base de datos
-	 * @param nHebras                  Numero de hebras maximas que manejara la base
-	 *                                 de datos
-	 * @param controlEstrictoInanicion Control de inanicion de las hebras. True si
-	 *                                 se quiere usar un semaforo estricto para
-	 *                                 ello. False si se quiere usar un semaforo
-	 *                                 debil
+	 * @param nHebras                  Numero de hebras maximas que manejara la base de datos
+	 * @param prioridadEnLectura       True para activar la prioridad de lectura. False para que no haya prioridad ni de lectura ni de escritura
+	 * @param semaforosFuertes         True para usar semaforos fuertes. False para usar semaforos debiles
 	 */
-	public BaseDatos(String ruta, int numeroTuplas, int nHebras, boolean prioridadEnLectura,boolean controlEstrictoInanicion) {
+	public BaseDatos(String ruta, int numeroTuplas, int nHebras, boolean prioridadEnLectura,boolean semaforosFuertes) {
 		
 		//inicializar valores
 		this.prioridadEnLectura = prioridadEnLectura;
 		this.lectores = new Semaforo(1, nHebras);
 		this.escritores = new Semaforo(1, nHebras);
-		this.cola = (controlEstrictoInanicion) ? new SemaforoFuerte(1, nHebras) : new Semaforo(1, nHebras);
+		this.cola = (semaforosFuertes) ? new SemaforoFuerte(1, nHebras) : new Semaforo(1, nHebras);
 		this.f = new File(ruta);
 		this.numeroTuplas = numeroTuplas;
 		
@@ -224,8 +221,14 @@ public class BaseDatos {
 	 */
 	private void crearBaseDatos() {
 		//borrado
-		if (f.exists())
-			f.delete();
+		if (f.exists()) {
+			if (!f.isDirectory())
+				f.delete();
+			else {
+				System.err.println("Debe especificar la ruta de un archivo en la configuracion de MainBaseDatos.java");
+				System.exit(0);
+			}
+		}
 		
 		//creacion
 		try {

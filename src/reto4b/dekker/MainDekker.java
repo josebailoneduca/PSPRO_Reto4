@@ -12,7 +12,9 @@ package reto4b.dekker;
  */
 public class MainDekker {
 
-	//variable compartida que cada hebra aumenta y disiminuye
+	/**
+	 * variable compartida que cada hebra aumenta y disiminuye
+	 */
 	public static int contadorCritico=0;
 	
 	

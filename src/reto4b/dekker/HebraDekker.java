@@ -11,19 +11,31 @@ import java.util.Random;
 public class HebraDekker extends Thread {
 
 	//ATRIBUTOS DE CLASE
-	//banderas
+	/**
+	 * Banderas de los hilos
+	 */
 	public static boolean[] bandera=new boolean[2];
+	
+	/**
+	 * Turno de hilo
+	 */
 	public static int turno=0;
 
 	
 	//ATRIBUTOS DE OBJETO
-	//identificador de la hebra
+	/**
+	 * identificador de la hebra
+	 */
 	private int id=0;
 	
-	//cicos a girar en el while
+	/**
+	 * Numero de ciclos a girar en el while
+	 */
 	private int ciclos;
 	
-	//valor a sumar a la variable compartida de la seccion critica
+	/**
+	 * Calor a sumar a la variable compartida de la seccion critica
+	 */
 	private int valorOperacionCritica=1;
 	
  

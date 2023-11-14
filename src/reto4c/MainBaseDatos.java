@@ -19,17 +19,17 @@ public class MainBaseDatos {
 	 * Se puede dejar a 0 o aumentar si se quiere aleatoriedad en la frecuecia en la que cada hilo 
 	 * intenta acceder a la base de datos
 	 */
-	public static int esperaAleatoriaEnCiclosDeHebras = 100;
+	public static int esperaAleatoriaEnCiclosDeHebras = 0;
 	
 	/**
 	 * Mostrar los mensajes de lectura de base de datos
 	 */
-	public static boolean debugSelect=false;
+	public static boolean debugSelect=true;
 	
 	/**
 	 * Mostrar los mensajes de escritura de base de datos
 	 */
-	public static boolean debugUpdate=false;
+	public static boolean debugUpdate=true;
 	
 	/**
 	 * Mostrar mensajes de progreso de ciclos de los hilos de lectura 
@@ -56,8 +56,8 @@ public class MainBaseDatos {
 		String rutaArchivo = "basedatos.dat";
 		//establecer que hay prioridad en la lectura
 		boolean prioridadEnLectura=false;
-		//controla de manera estricta la no inanicion de un hilo
-		boolean controlEstrictoDeInanicion = true;
+		//Usar semaforos fuertes en vez de debiles
+		boolean semaforosFuertes = true;
 		
 		//catindad de hebras que leeran
 		int hebrasLectura = 30;
@@ -87,7 +87,7 @@ public class MainBaseDatos {
 		int totalHebras = hebrasLectura + hebrasEscritura;
 		
 		//creacion de la base de datos
-		BaseDatos bd = new BaseDatos(rutaArchivo, numeroTuplas, totalHebras, prioridadEnLectura,controlEstrictoDeInanicion);
+		BaseDatos bd = new BaseDatos(rutaArchivo, numeroTuplas, totalHebras, prioridadEnLectura,semaforosFuertes);
 
 		// crear los hilos
 		ArrayList<HiloConsultaBD> hilos = new ArrayList<HiloConsultaBD>();

@@ -10,17 +10,32 @@ import java.util.Random;
 public class HebraPeterson extends Thread {
 
 	// ATRIBUTOS DE CLASE
-	// banderas
+	/**
+	 * banderas
+	 */
 	public static boolean[] bandera = new boolean[2];
+	/**
+	 * Turno
+	 */
 	public static int turno = 0;
 
 	// ATRIBUTOS DE OBJETO
+	/**
+	 * Indice de la hebra
+	 */
 	private int id = 0;
+	/**
+	 * Ciclos a realizar por la hebra
+	 */
 	private int ciclos;
+	
+	/**
+	 * Valor a sumar a la variable compartida
+	 */
 	private int valorOperacionCritica = 1;
 
 	/**
-	 * 
+	 *  Constructor 
 	 * @param id                    Identificador del hilo
 	 * @param ciclos                Ciclos a realizar por el hilo
 	 * @param valorOperacionCritica Valor a sumar a la variable compartida
