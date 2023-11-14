@@ -13,7 +13,9 @@ package reto4b.peterson;
  */
 public class MainPeterson {
 
-	
+	/**
+	 * Variable compartida
+	 */
 	public static int contadorCritico=0;
 	
 	

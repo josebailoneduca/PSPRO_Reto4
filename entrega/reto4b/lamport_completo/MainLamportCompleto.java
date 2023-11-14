@@ -14,7 +14,9 @@ package reto4b.lamport_completo;
  */
 public class MainLamportCompleto {
 
-	//variable compartida
+	/**
+	 * variable compartida
+	 */
 	public static int contadorCritico=0;
 	
 	

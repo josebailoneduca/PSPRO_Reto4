@@ -11,18 +11,36 @@ import java.util.Random;
 public class HebraLamportSimplificado extends Thread {
 
 	//ATRIBUTOS DE CLASE
-	//estado de escogiendo
+	/**
+	 * Estado de escogiendo
+	 */
 	public static boolean[] escogiendo;
-	//numeros adjudicados
+	
+	/**
+	 * numeros adjudicados
+	 */
 	public static int[] numero;
 
-	//numero maximo actual
+	/**
+	 * numero maximo actual
+	 */
 	public static int max = 0; 
 	
 	
 	//ATRIBUTOS DE OBJETO
+	/**
+	 * Indice de la hebra
+	 */
 	private int id=0;
+	
+	/**
+	 * Numero de ciclos a realizar
+	 */
 	private int ciclos;
+	
+	/**
+	 * Valor a sumar a la variable compartida
+	 */
 	private int valorOperacionCritica=1;
  
 	// METODOS DE CLASE  ####################################
@@ -40,7 +58,9 @@ public class HebraLamportSimplificado extends Thread {
 	
 	/**
 	 * Constructor
-	 * @param id indice del hebra para su gestion en Lamport
+	 * @param id Indice del hebra para su gestion en Lamport
+	 * @param ciclos Ciclos a realizar
+	 * @param valorOperacionCritica Valor a sumar a la variable compartida duarante la seccion critica
 	 */
 	public HebraLamportSimplificado(int id, int ciclos,int valorOperacionCritica){
 		this.id=id;

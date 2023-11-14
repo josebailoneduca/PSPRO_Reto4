@@ -12,30 +12,46 @@ public class HebraLamportCompleto extends Thread {
 
 	// ATRIBUTOS DE CLASE#################################
 	
-	// Estado de hebras escogiendo
+	/**
+	 * Estado de hebras escogiendo
+	 */
 	public static boolean[] escogiendo = new boolean[2];
-	// Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
+	
+	/**
+	 * Numeros adjudicados a cada hebra (indice 0:numero, indice 1:tipo de vuelta)
+	 */
 	public static int[][] numero;
 
-	// Numero maximo actual
+	/**
+	 * Numero maximo actual
+	 */
 	public static int max = 0;
 	
-	// Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una nueva vuelta
+	/**
+	 * Numero maximo de cada vuelta. Cuando max llega a este numero se empieza una nueva vuelta
+	 */
 	public static int tamanoVuelta = 0;
 	
-	// Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor)
-	// Va alternando entre 0 y 1
+	/**
+	 * Vuelta mayor (vuelta con menos prioridad que uno de vuelta no mayor) Va alternando entre 0 y 1
+	 */
 	public static int vueltaMayor = 0;
 	
 
 	// ATRIBUTOS DE OBJETO#############################
-	//Indice de la hebra actual
+	/**
+	 * Indice de la hebra actual
+	 */
 	private int i = 0;
 	
-	//Ciclos que debe dar la hebra actual
+	/**
+	 * Ciclos que debe dar la hebra actual
+	 */
 	private int ciclos;
 	
-	//valor a sumar para la operacion critica
+	/**
+	 * valor a sumar para la operacion critica
+	 */
 	private int valorOperacionCritica = 1;
 	
  
