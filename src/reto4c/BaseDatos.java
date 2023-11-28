@@ -246,9 +246,11 @@ public class BaseDatos {
 				raf.writeInt(0);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Archivo "+this.getRuta()+" no encontrado");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error accediendo a"+this.getRuta());
+			System.exit(0);
 		} finally {
 			try {
 				if (raf != null)
@@ -277,9 +279,11 @@ public class BaseDatos {
 			raf.writeInt(actual + 1);
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Archivo "+this.getRuta()+" no encontrado");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error escribiendo en "+this.getRuta());
+			System.exit(0);
 		} finally {
 			try {
 				if (raf != null)
@@ -306,9 +310,11 @@ public class BaseDatos {
 			salida = raf.readInt();
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Archivo "+this.getRuta()+" no encontrado");
+			System.exit(0);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error leyendo de "+this.getRuta());
+			System.exit(0);
 		} finally {
 			try {
 				if (raf != null)

@@ -69,7 +69,7 @@ public class MainBaseDatos {
 		int ciclos = 50;
 		
 		//cantidad de tuplas existentes en la base de datos
-		int numeroTuplas = 30;
+		int numeroTuplas = 20;
 		
 		//iniciar las hebras en un orden aleatorio
 		boolean startAleatorioDeHebras = true;
@@ -135,7 +135,9 @@ public class MainBaseDatos {
 		System.out.println("Total de tiempo: " + ((System.currentTimeMillis() - tiempoInicio) / 1000) + " segundos");
 		System.out.println("Hebras de lectura: "+hebrasLectura);
 		System.out.println("Hebras de escritura: "+hebrasEscritura);
-		System.out.println("Consulas realizados por hebra: "+ciclos);
+		System.out.println("ConsulTas realizadas por cada hebra: "+ciclos);
+		System.out.println("Prioridad de lectura: "+((prioridadEnLectura)?"SI":"NO"));
+		System.out.println("Tipo de semaforos usados: "+((semaforosFuertes)?"SEMAFOROS FUERTES":"SEMAFOROS DEBILES"));
 	}
 
 }
